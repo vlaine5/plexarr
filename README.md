@@ -35,17 +35,17 @@ Plex is an host network and Servarr on a user defined bridge.
 	Volumes folder creation example : 
 
 ```bash
-mkdir /SEEDBOX /docker
-cd /SEEDBOX
+mkdir /seedbox /docker
+cd /seedbox
 mkdir -p Downloads/InProgress \
 Downloads/movies \
 Downloads/tv \
-COMICS \
-SERIES \
-FILMS
+comics \
+tv \
+movies
 
 cd /docker
-mkdir -p Plex \
+mkdir -p plex \
 qbitorrent/config \
 sonarrv3 \
 radarr \
