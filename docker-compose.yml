@@ -4,30 +4,30 @@ services:
         image: linuxserver/plex:1.31.0
         container_name: app-plex1
         volumes:
-            - /docker/Plex:/config
-            - /SEEDBOX/FILMS:/movies
-            - /SEEDBOX/SERIES:/tv
-            - /docker/Plex/transcode:/transcode
+            - /docker/plex:/config
+            - /seedbox/movies:/movies
+            - /seedbox/tv:/tv
+            - /docker/plex/transcode:/transcode
         network_mode: host
         restart: always
         environment:
             - VERSION=latest
             - TZ=Europe/Paris
-            - PGID=65537
-            - PUID=1027
+            - PGID=1000
+            - PUID=1000
     qbittorrent:
         image: linuxserver/qbittorrent:4.5.1
         container_name: app-qbittorrent1
         networks: 
           - plexarr
         environment:
-          - PUID=1027
-          - PGID=65537
+          - PUID=1000
+          - PGID=1000
           - TZ=Etc/UTC
           - WEBUI_PORT=7000
         volumes:
           - /docker/qbitorrent/config:/config
-          - /SEEDBOX/Downloads:/downloads
+          - /seedbox/Downloads:/downloads
         ports:
           - 7000:7000
           - 7881:6881
@@ -42,11 +42,11 @@ services:
             - qbittorrent
         volumes:
             - /docker/sonarrv3:/config
-            - /SEEDBOX/Downloads:/downloads
-            - /SEEDBOX/SERIES:/tv
+            - /seedbox/Downloads:/downloads
+            - /seedbox/tv:/tv
         environment:
-            - PUID=1027
-            - PGID=65537
+            - PUID=1000
+            - PGID=1000
             - TZ=Europe/Paris
         ports:
             - 7989:8989
@@ -59,11 +59,11 @@ services:
             - qbittorrent
         volumes:
             - /docker/radarr:/config
-            - /SEEDBOX/Downloads:/downloads
-            - /SEEDBOX/FILMS:/tv
+            - /seedbox/Downloads:/downloads
+            - /seedbox/movies:/tv
         environment:
-            - PUID=1027
-            - PGID=65537
+            - PUID=1000
+            - PGID=1000
             - TZ=Europe/Paris
         ports:
             - 6878:7878
@@ -107,8 +107,8 @@ services:
       volumes:
         - /docker/tautulli:/config
       environment:
-        - PUID=1027
-        - PGID=65537
+        - PUID=1000
+        - PGID=1000
         - TZ=Europe/Paris
       ports:
         - 7181:8181
@@ -118,14 +118,14 @@ services:
       networks: 
         - plexarr
       environment:
-        - PUID=1027
-        - PGID=65537
+        - PUID=1000
+        - PGID=1000
         - TZ=Europe/Paris
       volumes:
         - /docker/bazarr:/config
-        - /SEEDBOX/Downloads:/downloads
-        - /SEEDBOX/FILMS:/tv #optional
-        - /SEEDBOX/SERIES:/SERIES #optional
+        - /seedbox/Downloads:/downloads
+        - /seedbox/movies:/tv #optional
+        - /seedbox/tv:/tv #optional
       ports:
         - 6767:6767
       restart: unless-stopped
@@ -135,8 +135,8 @@ services:
       networks: 
         - plexarr
       environment:
-        - PUID=1027
-        - PGID=65537
+        - PUID=1000
+        - PGID=1000
         - TZ=Europe/Paris
       volumes:
         - /docker/prowlarr:/config
@@ -149,14 +149,14 @@ services:
       networks: 
         - plexarr
       environment:
-        - PUID=1027
-        - PGID=65537
+        - PUID=1000
+        - PGID=1000
         - TZ=Europe/Paris
       volumes:
         - /docker/readarr:/config
-        - /SEEDBOX/COMICS:/COMICS #optional
+        - /seedbox/comics:/comics #optional
         - /docker/audiobookshelf/audiobooks:/audiobooks
-        - /SEEDBOX/Downloads:/downloads #optional
+        - /seedbox/Downloads:/downloads #optional
       ports:
         - 8787:8787
       restart: unless-stopped
@@ -166,13 +166,13 @@ services:
       networks: 
         - plexarr
       environment:
-        - PUID=1027
-        - PGID=65537
+        - PUID=1000
+        - PGID=1000
         - TZ=Europe/Paris
       volumes:
         - /docker/lidarr:/config
-        - /SEEDBOX/COMICS:/COMICS #optional
-        - /SEEDBOX/Downloads:/downloads #optional
+        - /seedbox/comics:/comics #optional
+        - /seedbox/Downloads:/downloads #optional
       ports:
         - 8686:8686
       restart: unless-stopped
