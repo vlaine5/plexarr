@@ -70,7 +70,7 @@ services:
     flaresolverr:
       # DockerHub mirror flaresolverr/flaresolverr:latest
       # image: ghcr.io/flaresolverr/flaresolverr:latest
-      image: ngosang/flaresolverr:3.0.0.beta3
+      image: flaresolverr/flaresolverr:v3.1.2
       container_name: app-flaresolverr1
       networks: 
         - plexarr
