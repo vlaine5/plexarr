@@ -45,7 +45,7 @@ tv \
 movies
 
 cd /docker
-mkdir -p plex \
+mkdir -p plex/transcode \
 qbitorrent/config \
 sonarrv3 \
 radarr \
