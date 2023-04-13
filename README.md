@@ -1,7 +1,7 @@
 # Plexarr Stack
 
 
-Compose with all you need to be free :) Here is Plexarr stack services and associated ports in the compose : 
+Compose with all you need to be free :) Here is Plexarr stack services and exposed ports in the compose : 
 - Plex 
 	- UDP: 1900 (access to the Plex DLNA Server)
 	- UDP: 5353 (older Bonjour/Avahi network discovery)
