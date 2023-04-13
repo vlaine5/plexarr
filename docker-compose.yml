@@ -1,0 +1,182 @@
+version: '2'
+services:
+    plex:
+        image: linuxserver/plex:1.31.0
+        container_name: app-plex1
+        volumes:
+            - /docker/Plex:/config
+            - /SEEDBOX/FILMS:/movies
+            - /SEEDBOX/SERIES:/tv
+            - /docker/Plex/transcode:/transcode
+        network_mode: host
+        restart: always
+        environment:
+            - VERSION=latest
+            - TZ=Europe/Paris
+            - PGID=65537
+            - PUID=1027
+    qbittorrent:
+        image: linuxserver/qbittorrent:4.5.1
+        container_name: app-qbittorrent1
+        networks: 
+          - plexarr
+        environment:
+          - PUID=1027
+          - PGID=65537
+          - TZ=Etc/UTC
+          - WEBUI_PORT=7000
+        volumes:
+          - /docker/qbitorrent/config:/config
+          - /SEEDBOX/Downloads:/downloads
+        ports:
+          - 7000:7000
+          - 7881:6881
+          - 7881:6881/udp
+        restart: unless-stopped
+    sonarr:
+        image: linuxserver/sonarr:3.0.10
+        container_name: app-sonarr1
+        networks: 
+          - plexarr
+        depends_on:
+            - qbittorrent
+        volumes:
+            - /docker/sonarrv3:/config
+            - /SEEDBOX/Downloads:/downloads
+            - /SEEDBOX/SERIES:/tv
+        environment:
+            - PUID=1027
+            - PGID=65537
+            - TZ=Europe/Paris
+        ports:
+            - 7989:8989
+    radarr:
+        image: linuxserver/radarr:4.3.2
+        container_name: app-radarr1
+        networks: 
+          - plexarr
+        depends_on:
+            - qbittorrent
+        volumes:
+            - /docker/radarr:/config
+            - /SEEDBOX/Downloads:/downloads
+            - /SEEDBOX/FILMS:/tv
+        environment:
+            - PUID=1027
+            - PGID=65537
+            - TZ=Europe/Paris
+        ports:
+            - 6878:7878
+    flaresolverr:
+      # DockerHub mirror flaresolverr/flaresolverr:latest
+      # image: ghcr.io/flaresolverr/flaresolverr:latest
+      image: ngosang/flaresolverr:3.0.0.beta3
+      container_name: app-flaresolverr1
+      networks: 
+        - plexarr
+      environment:
+        - LOG_LEVEL=debug
+        - LOG_HTML=true
+        - CAPTCHA_SOLVER=hcaptcha-solver
+        - TZ=Europe/Paris
+        - BROWSER_TIMEOUT=40000
+        - TEST_URL=https://www.google.com
+      # - HARVESTER_ENDPOINT=https://127.0.0.1:5000/token
+      ports:
+        - 7191:8191
+      restart: unless-stopped
+    overseerr:
+      image: sctx/overseerr:latest
+      container_name: app-overseerr1
+      networks: 
+        - plexarr
+      environment:
+        - LOG_LEVEL=debug
+        - TZ=Europe/Paris
+      ports:
+        - 7055:5055
+      volumes:
+        - /docker/overseerr/:/app/config
+      restart: unless-stopped
+    tautulli:
+      image: ghcr.io/tautulli/tautulli
+      container_name: app-tautulli1
+      networks: 
+        - plexarr
+      restart: unless-stopped
+      volumes:
+        - /docker/tautulli:/config
+      environment:
+        - PUID=1027
+        - PGID=65537
+        - TZ=Europe/Paris
+      ports:
+        - 7181:8181
+    bazarr:
+      image: hotio/bazarr:release-1.2.0
+      container_name: app-bazarr
+      networks: 
+        - plexarr
+      environment:
+        - PUID=1027
+        - PGID=65537
+        - TZ=Europe/Paris
+      volumes:
+        - /docker/bazarr:/config
+        - /SEEDBOX/Downloads:/downloads
+        - /SEEDBOX/FILMS:/tv #optional
+        - /SEEDBOX/SERIES:/SERIES #optional
+      ports:
+        - 6767:6767
+      restart: unless-stopped
+    prowlarr:
+      image: linuxserver/prowlarr:1.3.2
+      container_name: app-prowlarr
+      networks: 
+        - plexarr
+      environment:
+        - PUID=1027
+        - PGID=65537
+        - TZ=Europe/Paris
+      volumes:
+        - /docker/prowlarr:/config
+      ports:
+        - 9696:9696
+      restart: unless-stopped
+    readarr:
+      image: linuxserver/readarr:0.1.4-nightly
+      container_name: app-readarr
+      networks: 
+        - plexarr
+      environment:
+        - PUID=1027
+        - PGID=65537
+        - TZ=Europe/Paris
+      volumes:
+        - /docker/readarr:/config
+        - /SEEDBOX/COMICS:/COMICS #optional
+        - /docker/audiobookshelf/audiobooks:/audiobooks
+        - /SEEDBOX/Downloads:/downloads #optional
+      ports:
+        - 8787:8787
+      restart: unless-stopped
+    lidarr:
+      image: lscr.io/linuxserver/lidarr:latest
+      container_name: app-lidarr
+      networks: 
+        - plexarr
+      environment:
+        - PUID=1027
+        - PGID=65537
+        - TZ=Europe/Paris
+      volumes:
+        - /docker/lidarr:/config
+        - /SEEDBOX/COMICS:/COMICS #optional
+        - /SEEDBOX/Downloads:/downloads #optional
+      ports:
+        - 8686:8686
+      restart: unless-stopped
+networks:
+  plexarr:
+    name: plexarr
+    driver: bridge
