@@ -192,6 +192,22 @@ services:
       - ${JACKETT_PORT}:9117
     restart: always
 
+  lidarr:
+    image: linuxserver/lidarr:2.8.2
+    container_name: app-lidarr
+    networks:
+      - plexarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume2/docker/lidarr:/config
+      - /volume2/SEEDBOX/DOWNLOAD-LIDARR:/downloads #optional
+    ports:
+      - ${LIDARR_PORT}:8686
+    restart: always
+
   readarr:
     image: linuxserver/readarr:0.4.11-nightly
     container_name: app-readarr
@@ -204,27 +220,70 @@ services:
     volumes:
       - /volume2/docker/readarr:/config
       - /volume2/SEEDBOX/COMICS:/COMICS
-      - /volume2/docker/audiobookshelf/audiobooks:/audiobooks
+      - /volume2/SEEDBOX/LIVRES:/books
+      - /volume2/SEEDBOX/AUDIOBOOKS:/audiobooks
       - /volume2/SEEDBOX/Downloads:/downloads #optional
+    depends_on:
+        - calibre
+        - calibre-web
     ports:
       - ${READARR_PORT}:8787
     restart: always
 
-  lidarr:
-    image: linuxserver/lidarr:2.8.2
-    container_name: app-lidarr
-    networks:
-      - plexarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - /volume2/docker/lidarr:/config
-      - /volume2/SEEDBOX/COMICS:/COMICS #optional
-      - /volume2/SEEDBOX/DOWNLOAD-LIDARR:/downloads #optional
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:2.18.1
     ports:
-      - ${LIDARR_PORT}:8686
+      - ${AUDIOBOOK_PORT}:80
+    environment:
+      - AUDIOBOOKSHELF_UID=${PUID}
+      - AUDIOBOOKSHELF_GID=${PGID}
+    volumes:
+      - /volume2/SEEDBOX/AUDIOBOOKS:/audiobooks
+      - /volume2/docker/audiobookshelf/podcast/:podcasts
+      - /volume2/docker/audiobookshelf/config/:/config
+      - /volume2/docker/audiobookshelf/metadata/:/metadata
+      - /volume2/SEEDBOX/LIVRES:/Calibre_Library
+    restart: always
+    user: ${PUID}:${PGID}
+
+  calibre:
+    image: linuxserver/calibre:7.24.0
+    container_name: calibre
+    devices:
+    - /dev/dri/card0:/dev/dri/card0
+    - /dev/dri/renderD128:/dev/dri/renderD128
+    environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+    - LC_ALL=zh_CN.UTF-8
+    - DOCKER_MODS=linuxserver/mods:universal-package-install
+    - INSTALL_PACKAGES=fonts-noto-cjk
+    volumes:
+      - '/volume2/docker/calibre/config:/config'
+      - '/volume2/docker/calibre/uploads:/uploads'
+      - '/volume2/docker/calibre/plugins:/plugins'
+      - '/volume2/SEEDBOX/LIVRES:/Calibre_Library'
+    ports:
+    - ${CALIBRE_PORT1}:8080 #Calibre desktop gui
+    - ${CALIBRE_PORT2}:8181 #Calibre desktop gui HTTPS.
+    - ${CALIBRE_PORT3}:8081 #Calibre webserver gui.
+    restart: always
+
+  calibre-web:
+    image: linuxserver/calibre-web:0.6.24
+    container_name: calibre-web
+    environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+    - DOCKER_MODS=linuxserver/mods:universal-calibre
+    volumes:
+      - '/volume2/docker/calibre-web/config:/config'
+      - '/volume2/SEEDBOX/LIVRES:/books'
+      - '/volume2/SEEDBOX/Downloads:/downloads'
+    ports:
+      - ${CALIBRE_WEB_PORT}:8083
     restart: always
 
 networks:
