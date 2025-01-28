@@ -239,7 +239,7 @@ services:
       - AUDIOBOOKSHELF_GID=${PGID}
     volumes:
       - /volume2/SEEDBOX/AUDIOBOOKS:/audiobooks
-      - /volume2/docker/audiobookshelf/podcast/:podcasts
+      - /volume2/docker/audiobookshelf/podcasts/:/podcasts
       - /volume2/docker/audiobookshelf/config/:/config
       - /volume2/docker/audiobookshelf/metadata/:/metadata
       - /volume2/SEEDBOX/LIVRES:/Calibre_Library
