@@ -54,7 +54,7 @@ mkdir -p /volume2/docker/calibre/config
 mkdir -p /volume2/docker/calibre/uploads
 mkdir -p /volume2/docker/calibre/plugins
 mkdir -p /volume2/docker/calibre-web/config
-mkdir -p /volume2/docker/audiobookshelf/podcast
+mkdir -p /volume2/docker/audiobookshelf/podcasts
 mkdir -p /volume2/docker/audiobookshelf/config
 mkdir -p /volume2/docker/audiobookshelf/metadata
 ```
