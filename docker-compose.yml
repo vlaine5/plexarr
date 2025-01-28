@@ -236,10 +236,11 @@ services:
     networks:
       - plexarr
     ports:
-      - ${AUDIOBOOK_PORT}:80
+      - ${AUDIOBOOK_PORT}:9494
     environment:
       - AUDIOBOOKSHELF_UID=${PUID}
       - AUDIOBOOKSHELF_GID=${PGID}
+      - PORT=9494
     volumes:
       - /volume2/SEEDBOX/AUDIOBOOKS:/audiobooks
       - /volume2/docker/audiobookshelf/podcasts/:/podcasts
