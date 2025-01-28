@@ -233,6 +233,8 @@ services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:2.18.1
     container_name: app-audiobookshelf
+    networks:
+      - plexarr
     ports:
       - ${AUDIOBOOK_PORT}:80
     environment:
@@ -250,6 +252,8 @@ services:
   calibre:
     image: linuxserver/calibre:7.24.0
     container_name: calibre
+    networks:
+      - plexarr
     devices:
     - /dev/dri/card0:/dev/dri/card0
     - /dev/dri/renderD128:/dev/dri/renderD128
@@ -274,6 +278,8 @@ services:
   calibre-web:
     image: linuxserver/calibre-web:0.6.24
     container_name: calibre-web
+    networks:
+      - plexarr
     environment:
     - PUID=${PUID}
     - PGID=${PGID}
